@@ -52,7 +52,7 @@ export function ProductCard({ product }: Props) {
 
       return await updateCart({
         productId: data.productId,
-        quantity: data.quantity,
+        quantity: data.quantity + cartItem.quantity,
         id: cartItem.id,
       });
     }

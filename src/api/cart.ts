@@ -10,13 +10,13 @@ export const getCart = async () => {
 };
 
 export const addToCart = async (cartItem: Omit<CartItem, "id">) => {
-  const cart = await axios.post<CartItem>(`${API_URL}/cart`, { cartItem });
+  const cart = await axios.post<CartItem>(`${API_URL}/cart`, { ...cartItem });
   return cart.data;
 };
 
 export const updateCart = async (cartItem: CartItem) => {
   const cart = await axios.patch<CartItem>(`${API_URL}/cart/${cartItem.id}`, {
-    cartItem,
+    ...cartItem,
   });
   return cart.data;
 };
