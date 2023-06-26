@@ -1,9 +1,26 @@
-import { useLoaderData } from "react-router-dom"
-import { Product } from "../types/products"
-import { ProductCard } from "../components/ProductCard"
+import { useLoaderData } from "react-router-dom";
+import { Product } from "../types/products";
+import { ProductCard } from "../components/ProductCard";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "../api/products";
 
 export function Products() {
-  const { products } = useLoaderData() as { products: Product[] }
+  const { products: initialProducts } = useLoaderData() as {
+    products: Product[];
+  };
+
+  const {
+    isError,
+    data: products,
+    isLoading,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+    initialData: initialProducts,
+    refetchInterval: 1000 * 60 * 60,
+  });
+
+  console.log({ isError, data: products, isLoading });
 
   return (
     <div>
@@ -14,5 +31,5 @@ export function Products() {
         ))}
       </div>
     </div>
-  )
+  );
 }
