@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { getProducts } from "./api/products";
+import { getCart } from "./api/cart";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -29,9 +30,7 @@ const router = createBrowserRouter([
     id: "root",
     element: <RootLayout />,
     loader: async () => {
-      const { data: cart } = await axios.get<CartItem[]>(
-        "http://localhost:3000/cart"
-      );
+      const cart = await getCart();
       const products = await getProducts();
       // Filter out products that are not in the cart
       const filteredProducts = products.filter((product) =>

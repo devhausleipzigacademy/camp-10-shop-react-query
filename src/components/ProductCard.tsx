@@ -1,18 +1,20 @@
-import { Product, Sport } from "../types/products"
-import React, { useState } from "react"
+import { Product, Sport } from "../types/products";
+import React, { useState } from "react";
 import {
   GiBasketballBall,
   GiTennisBall,
   GiRunningShoe,
   GiAmericanFootballBall,
   GiSportMedal,
-} from "react-icons/gi"
-import { toast } from "react-hot-toast"
-import { HiCheckCircle, HiMinus, HiPlus } from "react-icons/hi"
-import { cn } from "../lib/utils"
-import { Button } from "./Button"
-import axios from "axios"
-import { CartItem } from "../types/cart"
+} from "react-icons/gi";
+import { toast } from "react-hot-toast";
+import { HiCheckCircle, HiMinus, HiPlus } from "react-icons/hi";
+import { cn } from "../lib/utils";
+import { Button } from "./Button";
+import axios from "axios";
+import { CartItem } from "../types/cart";
+import { useMutation } from "@tanstack/react-query";
+import { addToCart, getCart, updateCart } from "../api/cart";
 
 const sportIcon: Record<Sport, { icon: JSX.Element; color: string }> = {
   "american-football": {
@@ -23,61 +25,58 @@ const sportIcon: Record<Sport, { icon: JSX.Element; color: string }> = {
   other: { icon: <GiSportMedal />, color: "text-blue-500" },
   running: { icon: <GiRunningShoe />, color: "text-purple-500" },
   tennis: { icon: <GiTennisBall />, color: "text-yellow-300" },
-}
+};
 
 type Props = {
-  product: Product
-}
+  product: Product;
+};
+
+type MutationData = {
+  quantity: number;
+  productId: number;
+};
 
 export function ProductCard({ product }: Props) {
-  const [quantity, setQuantity] = useState(0)
+  const [quantity, setQuantity] = useState(0);
+  const { mutate, isError, isLoading, isSuccess, data } = useMutation(
+    async (data: MutationData) => {
+      const cart = await getCart();
+      const cartItem = cart.find((item) => item.productId === data.productId);
 
-  function increment() {
+      if (!cartItem) {
+        return await addToCart({
+          productId: data.productId,
+          quantity: data.quantity,
+        });
+      }
+
+      return await updateCart({
+        productId: data.productId,
+        quantity: data.quantity,
+        id: cartItem.id,
+      });
+    }
+  );
+
+  console.log(data, isLoading, isError, isSuccess);
+
+  function incrementHandler() {
     if (quantity < product.stock) {
-      setQuantity(quantity + 1)
+      setQuantity(quantity + 1);
     }
   }
 
-  function decrement() {
+  function decrementHandler() {
     if (quantity > 0) {
-      setQuantity(quantity - 1)
+      setQuantity(quantity - 1);
     }
   }
 
-  async function addToCart() {
-    const { data: cart } = await axios.get<CartItem[]>(
-      "http://localhost:3000/cart"
-    )
-    const cartItem = cart.find((item) => item.productId === product.id)
-    let item
-    if (!cartItem) {
-      const { data: newItem } = await axios.post<CartItem>(
-        "http://localhost:3000/cart",
-        {
-          productId: product.id,
-          quantity,
-        }
-      )
-      item = newItem
-    } else {
-      const { data: updatedItem } = await axios.patch<CartItem>(
-        `http://localhost:3000/cart/${cartItem.id}`,
-        {
-          quantity: cartItem.quantity + quantity,
-        }
-      )
-      item = updatedItem
-    }
-
-    await axios.patch(`http://localhost:3000/products/${product.id}`, {
-      stock: product.stock - quantity,
-    })
-
-    setQuantity(0)
-    toast("Product added to cart", {
-      icon: <HiCheckCircle className="w-6 h-6 text-green-500" />,
-      position: "bottom-right",
-    })
+  async function addToCartHandler() {
+    mutate({
+      productId: product.id,
+      quantity,
+    });
   }
 
   return (
@@ -107,16 +106,16 @@ export function ProductCard({ product }: Props) {
         </div>
         <div className="flex gap-4 items-center">
           <div className="flex items-center gap-2">
-            <Button onClick={decrement} variant="outline">
+            <Button onClick={decrementHandler} variant="outline">
               <HiMinus />
             </Button>
             <span className="font-medium w-6 text-center">{quantity}</span>
-            <Button onClick={increment} variant="outline">
+            <Button onClick={incrementHandler} variant="outline">
               <HiPlus />
             </Button>
           </div>
           <Button
-            onClick={addToCart}
+            onClick={addToCartHandler}
             className="flex-1"
             disabled={quantity === 0}
           >
@@ -125,5 +124,5 @@ export function ProductCard({ product }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }
