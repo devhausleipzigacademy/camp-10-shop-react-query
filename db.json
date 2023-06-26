@@ -18,7 +18,7 @@
       "category": "shoes",
       "sport": "running",
       "price": 70,
-      "stock": 3
+      "stock": 6
     },
     {
       "id": 3,
@@ -38,7 +38,7 @@
       "category": "shirts",
       "sport": "other",
       "price": 25,
-      "stock": 2
+      "stock": 4
     },
     {
       "id": 5,
@@ -204,18 +204,8 @@
   "cart": [
     {
       "productId": 1,
-      "quantity": 17,
+      "quantity": 19,
       "id": 1
-    },
-    {
-      "productId": 2,
-      "quantity": 3,
-      "id": 2
-    },
-    {
-      "productId": 4,
-      "quantity": 2,
-      "id": 3
     }
   ]
 }
