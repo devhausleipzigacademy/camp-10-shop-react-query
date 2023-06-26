@@ -1,9 +1,11 @@
-import { Link, Outlet, useLoaderData } from "react-router-dom"
-import { GiShoppingCart } from "react-icons/gi"
-import { CartItem } from "../types/cart"
+import { Link, Outlet, useLoaderData } from "react-router-dom";
+import { GiShoppingCart } from "react-icons/gi";
+import { CartItem } from "../types/cart";
+import { useCart } from "../hooks/useCart";
 
 export function RootLayout() {
-  const { cart } = useLoaderData() as { cart: CartItem[] }
+  const { data: cart } = useCart();
+  const cartAmount = cart?.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <div>
@@ -14,7 +16,7 @@ export function RootLayout() {
           <div className="w-px bg-white/30 h-6" />
           <Link to="/cart" className="flex items-center gap-1">
             <span className="text-sm w-6 h-6 bg-slate-200 flex items-center justify-center rounded-full text-slate-800">
-              {cart.length}
+              {cartAmount}
             </span>
             <GiShoppingCart className="w-6 h-6" />
           </Link>
@@ -25,5 +27,5 @@ export function RootLayout() {
         <Outlet />
       </main>
     </div>
-  )
+  );
 }

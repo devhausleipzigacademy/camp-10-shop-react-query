@@ -17,7 +17,7 @@ export function Cart() {
   const { data: products, isLoading } = useProducts({
     enabled: cart && cart.length > 0,
   });
-  console.log({ products, cart });
+  console.log({ cart });
 
   const productsWithQuanty = products
     ?.filter((product) => {

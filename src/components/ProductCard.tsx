@@ -7,13 +7,14 @@ import {
   GiAmericanFootballBall,
   GiSportMedal,
 } from "react-icons/gi";
+import { BiSolidErrorCircle } from "react-icons/bi";
 import { toast } from "react-hot-toast";
 import { HiCheckCircle, HiMinus, HiPlus } from "react-icons/hi";
 import { cn } from "../lib/utils";
 import { Button } from "./Button";
 import axios from "axios";
 import { CartItem } from "../types/cart";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToCart, getCart, updateCart } from "../api/cart";
 
 const sportIcon: Record<Sport, { icon: JSX.Element; color: string }> = {
@@ -38,6 +39,7 @@ type MutationData = {
 
 export function ProductCard({ product }: Props) {
   const [quantity, setQuantity] = useState(0);
+  const queryClient = useQueryClient();
   const { mutate, isError, isLoading, isSuccess, data } = useMutation(
     async (data: MutationData) => {
       const cart = await getCart();
@@ -55,6 +57,20 @@ export function ProductCard({ product }: Props) {
         quantity: data.quantity + cartItem.quantity,
         id: cartItem.id,
       });
+    },
+    {
+      onSuccess: () => {
+        setQuantity(0);
+        toast("Added to cart!", {
+          icon: <HiCheckCircle className="text-green-500" />,
+        });
+        queryClient.invalidateQueries(["cart"]);
+      },
+      onError: () => {
+        toast("Something went wrong", {
+          icon: <BiSolidErrorCircle className="text-red-500" />,
+        });
+      },
     }
   );
 
