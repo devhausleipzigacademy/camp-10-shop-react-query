@@ -1,7 +1,6 @@
 import { useRouteLoaderData } from "react-router-dom";
 import { ItemDropdown } from "../components/ItemDropdown";
 import { CartItem } from "../types/cart";
-import { Product } from "../types/products";
 import { useProducts } from "../hooks/useProducts";
 import { useCart } from "../hooks/useCart";
 
@@ -14,7 +13,7 @@ export function Cart() {
     initialData: initialCart,
   });
 
-  const { data: products, isLoading } = useProducts({
+  const { data: products } = useProducts({
     enabled: cart && cart.length > 0,
   });
   console.log({ cart });
@@ -41,9 +40,9 @@ export function Cart() {
             <img
               src={product.image}
               alt={product.name}
-              className="w-20 h-20 object-cover"
+              className="object-cover w-20 h-20"
             />
-            <span className="font-medium text-lg">{product.name}</span>
+            <span className="text-lg font-medium">{product.name}</span>
           </div>
           <div className="flex items-center gap-1">
             <span>Price: ${product.price}</span>
