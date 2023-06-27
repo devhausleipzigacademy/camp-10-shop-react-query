@@ -15,6 +15,8 @@ import { Button } from "./Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToCart, getCart, updateCart } from "../api/cart";
 import CardBadge from "./CardBadge";
+import axios from "axios";
+import { updateProduct } from "../api/products";
 
 const sportIcon: Record<Sport, { icon: JSX.Element; color: string }> = {
   "american-football": {
@@ -31,7 +33,12 @@ type Props = {
   product: Product;
 };
 
-type MutationData = {
+type CartMutationData = {
+  quantity: number;
+  productId: number;
+};
+
+type ProductMutationData = {
   quantity: number;
   productId: number;
 };
@@ -40,7 +47,7 @@ export function ProductCard({ product }: Props) {
   const [quantity, setQuantity] = useState(0);
   const queryClient = useQueryClient();
   const { mutate, isError, isLoading, isSuccess, data } = useMutation(
-    async (data: MutationData) => {
+    async (data: CartMutationData) => {
       const cart = await getCart();
       const cartItem = cart.find((item) => item.productId === data.productId);
 
@@ -73,7 +80,32 @@ export function ProductCard({ product }: Props) {
     }
   );
 
-  console.log(data, isLoading, isError, isSuccess);
+  const {
+    isLoading: isLoadingProduct,
+    isSuccess: isSuccessProduct,
+    isError: isErrorProduct,
+    data: dataProduct,
+    mutate: mutateProduct,
+  } = useMutation(
+    async (data: ProductMutationData) => {
+      const updatedProduct = await updateProduct(
+        data.productId,
+        product.stock - data.quantity
+      );
+      return updatedProduct;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["products"]);
+      },
+    }
+  );
+  console.log({
+    isLoadingProduct,
+    isSuccessProduct,
+    isErrorProduct,
+    dataProduct,
+  });
 
   function incrementHandler() {
     if (quantity < product.stock) {
@@ -92,12 +124,16 @@ export function ProductCard({ product }: Props) {
       productId: product.id,
       quantity,
     });
+    mutateProduct({
+      productId: product.id,
+      quantity,
+    });
   }
 
   return (
     <div className="shadow-md rounded-md overflow-hidden flex flex-col">
       <div className="relative">
-        <CardBadge stockAmount={4} />
+        {product.stock <= 3 && <CardBadge stockAmount={product.stock} />}
         <img
           src={product.image}
           alt={product.name}

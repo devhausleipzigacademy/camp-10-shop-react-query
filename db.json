@@ -8,7 +8,9 @@
       "category": "shoes",
       "sport": "running",
       "price": 50,
-      "stock": 4
+      "stock": 0,
+      "productId": 1,
+      "newStock": 0
     },
     {
       "id": 2,
@@ -18,7 +20,7 @@
       "category": "shoes",
       "sport": "running",
       "price": 70,
-      "stock": 3
+      "stock": 0
     },
     {
       "id": 3,
@@ -204,12 +206,12 @@
   "cart": [
     {
       "productId": 1,
-      "quantity": 16,
+      "quantity": 22,
       "id": 1
     },
     {
       "productId": 2,
-      "quantity": 21,
+      "quantity": 26,
       "id": 2
     },
     {
