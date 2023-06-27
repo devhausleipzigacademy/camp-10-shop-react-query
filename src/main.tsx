@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useContext, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -13,6 +13,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { getProducts } from "./api/products";
 import { getCart } from "./api/cart";
+import UnicornProvider from "./context/UnicornContext";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -57,10 +58,12 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <UnicornProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </UnicornProvider>
   </React.StrictMode>
 );

@@ -1,5 +1,5 @@
 import { Product, Sport } from "../types/products";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   GiBasketballBall,
   GiTennisBall,
@@ -17,6 +17,7 @@ import { addToCart, getCart, updateCart } from "../api/cart";
 import CardBadge from "./CardBadge";
 import axios from "axios";
 import { updateProduct } from "../api/products";
+import { useUnicornContext } from "../context/UnicornContext";
 
 const sportIcon: Record<Sport, { icon: JSX.Element; color: string }> = {
   "american-football": {
@@ -44,6 +45,7 @@ type ProductMutationData = {
 };
 
 export function ProductCard({ product }: Props) {
+  const { setUnicornNumber, unicornNumber } = useUnicornContext();
   const [quantity, setQuantity] = useState(0);
   const queryClient = useQueryClient();
   const { mutate, isError, isLoading, isSuccess, data } = useMutation(
@@ -132,6 +134,9 @@ export function ProductCard({ product }: Props) {
 
   return (
     <div className="shadow-md rounded-md overflow-hidden flex flex-col">
+      <Button onClick={() => setUnicornNumber(unicornNumber + 1)}>
+        Count unicorns
+      </Button>
       <div className="relative">
         {product.stock <= 3 && <CardBadge stockAmount={product.stock} />}
         <img

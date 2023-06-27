@@ -1,11 +1,13 @@
 import { useRouteLoaderData } from "react-router-dom";
 import { ItemDropdown } from "../components/ItemDropdown";
 import { CartItem } from "../types/cart";
-import { Product } from "../types/products";
 import { useProducts } from "../hooks/useProducts";
 import { useCart } from "../hooks/useCart";
+import { useUnicornContext } from "../context/UnicornContext";
 
 export function Cart() {
+  console.log("rendering cart");
+  const { phrase } = useUnicornContext();
   const { cart: initialCart } = useRouteLoaderData("root") as {
     cart: CartItem[];
   };
@@ -35,6 +37,7 @@ export function Cart() {
 
   return (
     <div className="flex flex-col gap-4">
+      <h1 className="text-4xl">{phrase}</h1>
       {productsWithQuanty?.map((product) => (
         <div key={product.id} className="flex items-center justify-between">
           <div className="flex items-center gap-4">
