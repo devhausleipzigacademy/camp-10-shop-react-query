@@ -12,10 +12,9 @@ import { toast } from "react-hot-toast";
 import { HiCheckCircle, HiMinus, HiPlus } from "react-icons/hi";
 import { cn } from "../lib/utils";
 import { Button } from "./Button";
-import axios from "axios";
-import { CartItem } from "../types/cart";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToCart, getCart, updateCart } from "../api/cart";
+import CardBadge from "./CardBadge";
 
 const sportIcon: Record<Sport, { icon: JSX.Element; color: string }> = {
   "american-football": {
@@ -98,6 +97,7 @@ export function ProductCard({ product }: Props) {
   return (
     <div className="shadow-md rounded-md overflow-hidden flex flex-col">
       <div className="relative">
+        <CardBadge stockAmount={4} />
         <img
           src={product.image}
           alt={product.name}
